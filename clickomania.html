@@ -3,7 +3,7 @@
 <title>Clickomania Clone - By: B. Nikhil Baliga</title>
 
 <script type="text/javascript" src="startup_files/jquery-1.9.0.min.js"></script>
-<link rel="stylesheet" type="text/css" href="startup_files/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
 
 <style type="text/css">
 	.cube {
@@ -92,14 +92,30 @@
 <body>
 
 <div class="contanier">
-	<div id="game_area" class="well span4 offset6">
+	<div class="navbar">
+	  <div class="navbar-inner">
+	    <a class="brand" href="#">Clickomania</a>
+	    <ul class="nav">
+	      <li class="active"><a href="#">Home</a></li>
+	      <li><a href="#">Help</a></li>
+	      <li><a href="#">About</a></li>
+	    </ul>
+	  </div>
+	</div>
 
+
+	<div id="game_area" class="well span4 offset6"></div>
+	<div class="well span3" style="height: 500px; text-align: center;">
+		<button class="btn btn-large btn-primary" id="btn_new_game">New Game</button>
+		<p>&nbsp;</p>
+		<button class="btn btn-inverse hide" id="btn_undo"><i class="icon-repeat icon-white"></i> Undo</button>
 	</div>
 </div>
 
 <script type="text/javascript">
 
 var game_matrix = [];
+var old_game_matrix = [];
 
 var height = 500; // 500 px
 var cube_height = 28; // 28 px
@@ -110,6 +126,7 @@ var no_of_cols = 10;
 function new_game() {
 
 	game_matrix = [];
+	old_game_matrix = [];
 
 	for (i = 0; i < no_of_rows; i++) {
 
@@ -128,6 +145,8 @@ function new_game() {
 		game_matrix.push(cur_row);
 	}
 
+	old_game_matrix = game_matrix.slice(0);
+	console.log(old_game_matrix);
 	draw_from_game_matrix();
 }
 
@@ -159,7 +178,6 @@ function draw_from_game_matrix() {
 
 // When I click on a cube
 var cubes_to_be_processed = [];
-var cubes_to_be_removed = [];
 var cube_index_to_remove = "";
 
 $('#game_area').on('click', '.cube', function() {
@@ -168,7 +186,29 @@ $('#game_area').on('click', '.cube', function() {
 	var col = $(this).data('col');
 
 	// Check if it has valid neighbours
+	var neighbour_found = check_if_neighbour_exists(row, col, cube_index);
+
+	if (neighbour_found) {
+		// old_game_matrix = game_matrix.slice(0);
+		mark_cube_to_remove(row, col);
+		cube_index_to_remove = cube_index;
+		process_cubes_to_remove();	
+	} else {
+		// Wrong - No cells
+	}
+
+	check_if_move_exists();
+
+});
+
+function check_if_neighbour_exists(row, col, cube_index) {
+	// Check if it has valid neighbours
 	var neighbour_found = false;
+
+	if (cube_index == 0) {
+		return false;
+	}
+
 	if (row > 0) {
 		if(game_matrix[row - 1][col] == cube_index) {
 			neighbour_found = true;
@@ -193,16 +233,47 @@ $('#game_area').on('click', '.cube', function() {
 		}
 	}
 
-	if (neighbour_found) {
-		mark_cube_to_remove(row, col);
-		cube_index_to_remove = cube_index;
-		process_cubes_to_remove();	
-	} else {
-		// Wrong - No cells
-	}
-	
+	return neighbour_found;
+}
 
-});
+function check_if_move_exists() {
+	valid_move_exists = false;
+	non_white_exists = false;
+
+	for (i = 0; i < no_of_rows; i++) {
+		for (j = 0; j < no_of_cols; j++) {
+			
+			if (game_matrix[i][j] != 0) {
+				non_white_exists = true;
+			}
+
+			if(check_if_neighbour_exists(i, j, game_matrix[i][j])) {
+				valid_move_exists = true;
+				break;
+			}
+		}
+
+		if(valid_move_exists) {
+			break;
+		}
+	}
+
+	if (non_white_exists == true && valid_move_exists == false) {
+		show_game_over(false);
+		return;
+	}
+
+	return valid_move_exists;
+
+}
+
+function show_game_over(victory) {
+	if (victory) {
+		alert("You Win!");
+	} else {
+		alert("Game Over");
+	}
+}
 
 function process_cubes_to_remove() {
 	while (cubes_to_be_processed.length != 0) {
@@ -271,6 +342,15 @@ function mark_cube_to_remove(row, col) {
 }
 
 $(document).ready(function() {
+	new_game();
+});
+
+$('#btn_undo').on('click', function() {
+	game_matrix = old_game_matrix.slice(0);
+	draw_from_game_matrix();
+});
+
+$('#btn_new_game').on('click', function() {
 	new_game();
 });
 </script>
