@@ -79,41 +79,27 @@ $('#game_area').on('click', '.cube', function() {
 
 });
 
-function check_if_neighbour_exists(row, col, cube_index) {
-    // Check if it has similar neighbours
-    var neighbourFound = false;
 
-    if (!cube_index) {
+// Check if it has similar neighbours
+function check_if_neighbour_exists(row, col, cube_index) {
+
+    if(!cube_index) {
         return false;
     }
 
-    var neighbours = [[row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]];
+    // where can we find neighbours?
+    var positions = [[row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]];
 
-    if (row > 0) {
-        if(gameMatrix[row - 1][col] == cube_index) {
-            neighbourFound = true;
-        }
-    }
 
-    if (col > 0) {
-        if(gameMatrix[row][col - 1] == cube_index) {
-            neighbourFound = true;
-        }
-    }
+    // don't consider cells outside the board
+    positions = _.filter(positions, function(p){
+        return p[0] >=0 && p[1] >= 0 && p[0] < rowCount && p[1] < colCount;
+    });
 
-    if (row < rowCount - 1) {
-        if(gameMatrix[row + 1][col] == cube_index) {
-            neighbourFound = true;
-        }
-    }
+    return _.any(positions, function(p){
+        return gameMatrix[p[0]][p[1]] === cube_index;
+    })
 
-    if (col < colCount - 1) {
-        if(gameMatrix[row][col + 1] == cube_index) {
-            neighbourFound = true;
-        }
-    }
-
-    return neighbourFound;
 }
 
 function check_if_move_exists() {
