@@ -1,4 +1,3 @@
-
 var gameMatrix, oldGameMatrix;
 
 var height     = 500; // 500 px
@@ -9,26 +8,14 @@ var colCount   = 10;
 
 function startNewGame() {
 
-    gameMatrix    = [];
-    oldGameMatrix = [];
-
     var cubeTypeCount = parseInt($('#difficulty_level').val(), 10);
 
-    for(i = 0; i < rowCount; i++) {
-
-        // html += "<tr>";
-        var cur_row = [];
-
-        for (j = 0; j < colCount; j++) {
-            // Get random number between 1 and total number of supported cubes
-            var cur_index = Math.floor(1 + (Math.random() * cubeTypeCount))
-
-            cur_row.push(cur_index);
-
-        }
-
-        gameMatrix.push(cur_row);
-    }
+    // Fill gameMatrix with random cubes
+    gameMatrix = _.range(rowCount).map(function(){
+        return _.range(colCount).map(function(){
+            return _.random(1, cubeTypeCount);
+        });
+    });
 
     oldGameMatrix = gameMatrix.slice(0);
     draw_from_gameMatrix();
