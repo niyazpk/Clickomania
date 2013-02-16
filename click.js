@@ -73,38 +73,40 @@ $('#game_area').on('click', '.cube', function() {
 });
 
 function check_if_neighbour_exists(row, col, cube_index) {
-    // Check if it has valid neighbours
-    var neighbour_found = false;
+    // Check if it has similar neighbours
+    var neighbourFound = false;
 
-    if (cube_index == 0) {
+    if (!cube_index) {
         return false;
     }
 
+    var neighbours = [[row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]];
+
     if (row > 0) {
         if(gameMatrix[row - 1][col] == cube_index) {
-            neighbour_found = true;
+            neighbourFound = true;
         }
     }
 
     if (col > 0) {
         if(gameMatrix[row][col - 1] == cube_index) {
-            neighbour_found = true;
+            neighbourFound = true;
         }
     }
 
     if (row < rowCount - 1) {
         if(gameMatrix[row + 1][col] == cube_index) {
-            neighbour_found = true;
+            neighbourFound = true;
         }
     }
 
     if (col < colCount - 1) {
         if(gameMatrix[row][col + 1] == cube_index) {
-            neighbour_found = true;
+            neighbourFound = true;
         }
     }
 
-    return neighbour_found;
+    return neighbourFound;
 }
 
 function check_if_move_exists() {
