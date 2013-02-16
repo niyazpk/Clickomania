@@ -12,15 +12,16 @@ function startNewGame() {
 	gameMatrix    = [];
 	oldGameMatrix = [];
 
-	for (i = 0; i < rowCount; i++) {
+	var cubeTypeCount = parseInt($('#difficulty_level').val(), 10);
+
+	for(i = 0; i < rowCount; i++) {
 
 		// html += "<tr>";
-		cur_row = [];
+		var cur_row = [];
 
 		for (j = 0; j < colCount; j++) {
 			// Get random number between 1 and total number of supported cubes
-			var total_cubes = parseInt($('#difficulty_level').val(), 10);
-			var cur_index = Math.floor(1 + (Math.random() * total_cubes))
+			var cur_index = Math.floor(1 + (Math.random() * cubeTypeCount))
 
 			cur_row.push(cur_index);
 
@@ -30,7 +31,6 @@ function startNewGame() {
 	}
 
 	oldGameMatrix = gameMatrix.slice(0);
-	console.log(oldGameMatrix);
 	draw_from_gameMatrix();
 }
 
@@ -41,7 +41,7 @@ function draw_from_gameMatrix() {
 	for (i = 0; i < rowCount; i++) {
 
 		html += "<tr>";
-		cur_row = gameMatrix[i];
+		var cur_row = gameMatrix[i];
 
 		for (j = 0; j < colCount; j++) {
 
