@@ -334,6 +334,19 @@ function remove_marked_cubes() {
 		}
 	}
 
+	// Check the last row
+	for (j = 0; j < no_of_cols - 1; j++) {
+		if (game_matrix[no_of_rows - 1][j] == 0) {
+			// Shift all to the left
+			for (m = j; m < no_of_cols - 1; m++) {
+				for (n = 0; n < no_of_rows; n++) {
+					game_matrix[n][m] = game_matrix[n][m + 1];
+					game_matrix[n][m + 1] = 0;
+				}
+			}
+		}
+	}
+
 	draw_from_game_matrix();
 }
 
