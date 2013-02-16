@@ -6,9 +6,15 @@ var cubeWidth  = cubeHeight;
 var rowCount   = Math.round(height / cubeHeight);
 var colCount   = 10;
 
+var timer_interval = null;
+
 function startNewGame() {
 
     var cubeTypeCount = parseInt($('#difficulty_level').val(), 10);
+
+    timer_value = 0;
+    clearInterval(timer_interval);
+    timer_interval = setInterval(update_timer, 1000);
 
     // Fill gameMatrix with random cubes
     gameMatrix = _.range(rowCount).map(function(){
@@ -19,6 +25,7 @@ function startNewGame() {
 
     oldGameMatrix = gameMatrix.slice(0);
     draw_from_gameMatrix();
+
 }
 
 function draw_from_gameMatrix() {
@@ -110,24 +117,27 @@ function check_if_neighbour_exists(row, col, cube_index) {
 }
 
 function check_if_move_exists() {
+
     valid_move_exists = false;
     non_white_exists = false;
+    non_white = 0;
 
     for (i = 0; i < rowCount; i++) {
         for (j = 0; j < colCount; j++) {
 
             if (gameMatrix[i][j] != 0) {
                 non_white_exists = true;
+                non_white += 1;
             }
 
             if(check_if_neighbour_exists(i, j, gameMatrix[i][j])) {
                 valid_move_exists = true;
-                break;
+                // break;
             }
         }
 
         if(valid_move_exists) {
-            break;
+            // break;
         }
     }
 
@@ -139,16 +149,22 @@ function check_if_move_exists() {
         return;
     }
 
+    score = ((rowCount * colCount) - non_white);
+    $('#score_value').text(score + " / " + (rowCount * colCount));
+
     return valid_move_exists;
 
 }
 
 function show_game_over(victory) {
+
     if (victory) {
         alert("You Win");
     } else {
         alert("Game Over");
     }
+
+    clearInterval(timer_interval);
 }
 
 function process_cubes_to_remove() {
@@ -246,3 +262,21 @@ $('#btn_new_game').on('click', function() {
 $('.show_help').on('click', function() {
     $('.modal').modal('show');
 });
+
+timer_value = 0;
+function update_timer() {
+    timer_value += 1;
+
+    min = Math.floor(timer_value / 60);
+    sec = timer_value % 60;
+
+    if (min < 10) {
+        min = "0" + min;
+    }
+
+    if (sec < 10) {
+        sec = "0" + sec;
+    }
+
+    $('#timer_value').text(min + " : " + sec);
+}
